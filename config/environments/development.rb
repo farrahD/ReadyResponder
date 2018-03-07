@@ -39,12 +39,14 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  #config.action_mailer.delivery_method = :test
-  config.action_mailer.delivery_method = :letter_opener
+  # Use :letter_opener (open in browser), or :smtp (to test using real SMTP)
+  # Must be a symbol or it wont override action_mailer defaults.
+  config.action_mailer.delivery_method = ENV.fetch("MAIL_METHOD", "letter_opener").to_sym
+
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 587,
-    domain: "billericaema.org",
+    address: ENV.fetch("MAIL_SMTP_ADDR", "smtp.gmail.com"),
+    port: ENV.fetch("MAIL_SMTP_PORT", 587).to_i,
+    domain: ENV.fetch("MAIL_SMTP_DOMAIN", "billericaema.org"),
     authentication: "plain",
     enable_starttls_auto: true,
     user_name: ENV["MAIL_USERNAME"],
